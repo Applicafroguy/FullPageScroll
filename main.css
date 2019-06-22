@@ -1,0 +1,32 @@
+.box {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+
+}
+.box1 {
+  
+  background: yellow;
+}
+.box2 {
+  background: green;
+}
+.box3 {
+  background: purple;
+}
+.box4 {
+  background: gray;
+}
+.box5 {
+  background: red;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+}
