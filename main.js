@@ -1,36 +1,66 @@
-var delta = 0;
 var boxs = document.querySelectorAll('.box');
-var blockItems = boxs.length - 1;
-var speed = .5;
+var speed = .3;
+var delta = 0;
 var scrollStatus = true;
-document.addEventListener('wheel', function (e) {
+var direction = 1;
+var count = (boxs.length - 1) + '00';
+// mobile
+var initialY = null;
+boxs.forEach(function (item) {
+  item.addEventListener('wheel', startWheel, false);
+  item.addEventListener("touchstart", startTouch, false);
+  item.addEventListener("touchmove", moveTouch, false);
+});
 
-  if(scrollStatus){
-   
-    if (e.deltaY > 0 && delta < blockItems + '00') {
-      scrollUp()
-    
 
-    }
-     else if (e.deltaY < 0 && delta > 0) {
-       scrollDown()
-     
-
+function startWheel(e) {
+  if (scrollStatus) {
+    if (e.deltaY > 0 && delta < count) {
+      scroll(1);
+    } else if (e.deltaY < 0 && delta > 0) {
+      scroll(0);
     }
   }
+}
+
+function scroll(item) {
+  direction = item;
+  TweenMax.to('.box', speed, {
+    scale: 0.9,
+    onStart: function () {
+      scrollStatus = false;
+    },
+    onComplete: startTranslate,
+    onCompleteParams: [direction]
+  });
+}
 
 
+function startTranslate(direction) {
+  if (direction === 1) {
+    delta += 100;
+  } else {
+    delta -= 100;
+  }
+  TweenMax.to('.box', speed, {
+    y: -delta + '%',
+    onComplete: endTranslate
+  });
+}
 
-}, false);
+function endTranslate() {
+  TweenMax.to('.box', speed, {
+    scale: 1
+  });
+  setTimeout(function () {
+    scrollStatus = true;
+  }, 300);
+}
 
-document.addEventListener("touchstart", startTouch, false);
-document.addEventListener("touchmove", moveTouch, false);
 
-
-var initialY = null;
+// mobile touch
 
 function startTouch(e) {
-
   initialY = e.touches[0].clientY;
 };
 
@@ -39,82 +69,19 @@ function moveTouch(e) {
   if (initialY === null) {
     return;
   }
-
-
   var currentY = e.touches[0].clientY;
-
-
   var diffY = initialY - currentY;
 
   if (diffY > 0) {
-    // swiped up
-    if (delta < blockItems + '00' && scrollStatus) {
-     scrollUp()
+//up
+    if (delta < count && scrollStatus) {
+      scroll(1);
     }
   } else {
-    // swiped down
+    //own
     if (delta > 0 && scrollStatus) {
-    scrollDown()
+      scroll(0);
     }
   }
-
   initialY = null;
-
 };
-
-
-function scrollUp(){
-  TweenMax.to('.box', speed, {
-    scale: .9,
-    onStart: startZoom,
-    onComplete: endZoom
-  })
-  function startZoom() {
-
-    scrollStatus = false
-  }
-  function endZoom() {
-    delta += 100;
-    TweenMax.to('.box', speed, {
-      y: -delta + '%',
-      onComplete: endTranslate
-    })
-    setTimeout(function () {
-      scrollStatus = true
-    }, 1000)
-
-  }
-  function endTranslate() {
-    TweenMax.to('.box', speed, {
-      scale: 1
-    })
-  }
-}
-
-function scrollDown(){
-  delta -= 100
-  TweenMax.to('.box', speed, {
-    scale: .9,
-    onStart: startZoom,
-    onComplete: endZoom
-  })
-  function startZoom() {
-    scrollStatus = false
-  }
-  function endZoom() {
-
-    TweenMax.to('.box', speed, {
-      y: -delta + '%',
-      onComplete: endTranslate
-    })
-    setTimeout(function () {
-      scrollStatus = true
-    }, 1000)
-
-  }
-  function endTranslate() {
-    TweenMax.to('.box', speed, {
-      scale: 1
-    })
-  }
-}
